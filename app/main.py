@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -20,11 +20,17 @@ init_db()
 
 @app.get("/orders", response_model=list[OrderResponse])
 async def get_orders(db: Session = Depends(get_db)):
-    return db.query(Order).all()
+    try:
+        return db.query(Order).all()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
 @app.post("/orders", response_model=OrderResponse)
 async def create_order(order: OrderCreate, db: Session = Depends(get_db)):
+    if not order.symbol:
+        raise HTTPException(status_code=400, detail="Symbol is required")
     db_order = Order(
         symbol=order.symbol,
         quantity=order.quantity,

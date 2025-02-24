@@ -7,6 +7,7 @@ from .models import Base
 
 dotenv.load_dotenv('.env')
 DB_URL = os.environ.get("DB_URL", "sqlite:///./trades.db")
+engine = create_engine(DB_URL, echo=True)
 
 
 def ensure_database_exists():
@@ -34,7 +35,6 @@ def ensure_database_exists():
 
 
 def init_db():
-    engine = create_engine(DB_URL, echo=True)
     ensure_database_exists()
     Base.metadata.create_all(bind=engine)
 
