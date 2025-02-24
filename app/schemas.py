@@ -8,7 +8,6 @@ class OrderCreate(BaseModel):
     price: float = Field(..., gt=0, description="Price must be a positive float")
 
 
-
 class OrderResponse(OrderCreate):
     id: int
     created_at: datetime
