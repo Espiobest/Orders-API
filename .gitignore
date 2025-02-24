@@ -2,3 +2,4 @@
 *.db
 app/__pychache__
 tests/__pycache__
+.idea
