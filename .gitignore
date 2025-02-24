@@ -1,2 +1,4 @@
 .env
 *.db
+app/__pychache__
+tests/__pycache__
