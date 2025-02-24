@@ -63,6 +63,6 @@ jobs:
           script: |
             docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_PASSWORD }}"
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/postgresql:latest
-            docker stop myapp || true
-            docker rm myapp || true
+            docker stop postgresql || true
+            docker rm postgresql || true
             docker run -d -p 8080:8080 --name postgresql ${{ secrets.DOCKERHUB_USERNAME }}/postgresql:latest
