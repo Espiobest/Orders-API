@@ -1,5 +1,5 @@
 import pytest
-from sqlmodel import SQLModel, Session, create_engine
+from sqlmodel import Session, create_engine
 from app.main import app
 from app.database import get_db
 from app.models import Base

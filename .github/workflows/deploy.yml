@@ -61,8 +61,27 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
+            # Pull the latest FastAPI app image
             docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_PASSWORD }}"
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/postgresql:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/fastapi-app:latest
+            
+            # Stop and remove the old FastAPI container (if exists)
+            docker stop fastapi-app || true
+            docker rm fastapi-app || true
+            
+            # Stop and remove the old PostgreSQL container (if needed)
             docker stop postgresql || true
             docker rm postgresql || true
-            docker run -d -p 8080:8080 --name postgresql ${{ secrets.DOCKERHUB_USERNAME }}/postgresql:latest
+            
+            # Start PostgreSQL container (named 'postgresql')
+            docker run -d -p 5432:5432 --name postgresql \
+              -e POSTGRES_USER=${{ secrets.DB_USER }} \
+              -e POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e POSTGRES_DB=trades \
+              postgres:latest
+            
+            # Start FastAPI app and link it to PostgreSQL
+            docker run -d -p 8080:8080 --name fastapi-app \
+              --env DB_URL=postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@postgresql/trades \
+              --network=host \
+              ${{ secrets.DOCKERHUB_USERNAME }}/fastapi-app:latest
