@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class OrderCreate(BaseModel):
-    symbol: str = Field(..., min_length=1, max_length=10, regex="^[A-Z]+$")
+    symbol: str = Field(..., min_length=1, max_length=10, pattern="^[A-Z]+$")
     quantity: int = Field(..., gt=0, description="Quantity must be a positive integer")
     price: float = Field(..., gt=0, description="Price must be a positive float")
 
